@@ -1,12 +1,26 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Url } from './entities/url.entity';
 import { UrlShortenerModule } from './url-shortener/url-shortener.module';
-import { UrlService } from './url/url.service';
 
 @Module({
-  imports: [UrlShortenerModule],
-  controllers: [AppController],
-  providers: [AppService, UrlService],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        type: 'postgres',
+        host: config.get<string>('DB_HOST', 'localhost'),
+        port: config.get<number>('DB_PORT', 5432),
+        username: config.get<string>('DB_USER', 'postgres'),
+        password: config.get<string>('DB_PASSWORD', 'lonely1234'),
+        database: config.get<string>('DB_NAME', 'lonely'),
+        entities: [Url],
+        synchronize: true,
+      }),
+    }),
+    UrlShortenerModule,
+  ],
 })
 export class AppModule {}
