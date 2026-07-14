@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Url } from './entities/url.entity';
 import { UrlShortenerModule } from './url-shortener/url-shortener.module';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UrlShortenerModule } from './url-shortener/url-shortener.module';
       }),
     }),
     UrlShortenerModule,
+    RedisModule,
   ],
 })
 export class AppModule {}
